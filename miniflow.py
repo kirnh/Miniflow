@@ -63,13 +63,28 @@ class Mul(Node):
 
 # A node that acts as a linear function
 class Linear(Node):
-	def __init__(self, inputs, weights, bias):
-		Node.__init__(self, [inputs, weights, bias])
+    def __init__(self, X, W, b):
+        Node.__init__(self, [X, W, b])
 
-	def forward(self):
-		self.value = bias
-		self.value = np.sum(np.array(self.inbound_nodes[0].value)\
-		 * np.array(self.inbound_nodes[1].value)) + self.inbound_nodes[2].value
+    def forward(self):
+        X = self.inbound_nodes[0].value
+        W = self.inbound_nodes[1].value
+        b = self.inbound_nodes[2].value
+        self.value = np.dot(X, W) + b
+        
+class Sigmoid(Node):
+    def __init__(self, node):
+        Node.__init__(self, [node])
+
+    def _sigmoid(self, x):
+        """This method is separate from `forward` because it
+        will be used later with `backward` as well."""
+        sigmoid = 1 / (1 + np.exp(-x))
+        return sigmoid
+
+    def forward(self):
+        x = self.inbound_nodes[0].value
+        self.value = self._sigmoid(x)
 
 def topological_sort(feed_dict):
     """
@@ -129,28 +144,6 @@ def forward_pass(output_node, sorted_nodes):
     Returns the output node's value
     """
 
-x, y, z, a = Input(), Input(), Input(), Input()
-add = Add(x, y, z, a)
-mul = Mul(x, y, z, a)
-feed_dict = {x: 10, y: 20, z: 25, a: 45}
-sorted_nodes = topological_sort(feed_dict = feed_dict)
-
-print 'Testing Add node: ', forward_pass(add, sorted_nodes)
-print 'Testing Mul node: ', forward_pass(mul, sorted_nodes)
-
-print 'Testing Linear node:'
-inputs, weights, bias = Input(), Input(), Input()
-linear = Linear(inputs, weights, bias)
-feed_dict = {
-	inputs: [6, 14, 3],
-	weights: [0.5, 0.25, 1.4],
-	bias: 2
-}
-
-graph = topological_sort(feed_dict)
-output = forward_pass(linear, graph)
-
-print output
 
 
 
