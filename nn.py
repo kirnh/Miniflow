@@ -1,5 +1,6 @@
 from miniflow import *
 
+##################################################################
 #Testing working of Add and Mul node classes
 x, y, z, a = Input(), Input(), Input(), Input()
 add = Add(x, y, z, a)
@@ -11,6 +12,7 @@ forward_pass(graph)
 print('Testing Add node output: ', add.value)
 print('Testing Mul node output: ', mul.value)
 
+###################################################################
 #Testing the working of Linear Node class
 print('Testing Linear node output:')
 inputs, weights, bias = Input(), Input(), Input()
@@ -22,7 +24,7 @@ feed_dict = {
 }
 
 graph = topological_sort(feed_dict)
-forward_pass(graph)
+forward_and_backward(graph)
 print(linear.value)
 
 X, W, b = Input(), Input(), Input()
@@ -38,6 +40,7 @@ graph = topological_sort(feed_dict)
 forward_pass(graph)
 print(f.value)
 
+###################################################################
 #Testing the working of Sigmoid activation function
 print('Testing Sigmoid activation:')
 X, W, b = Input(), Input(), Input()
@@ -52,7 +55,7 @@ b_ = np.array([-3., -5])
 feed_dict = {X: X_, W: W_, b: b_}
 
 graph = topological_sort(feed_dict)
-forward_pass(graph)
+forward_and_backward(graph)
 print(g.value)
 
 """
@@ -71,5 +74,5 @@ a_ = np.array([4.5, 5, 10])
 feed_dict = {y: y_, a: a_}
 graph = topological_sort(feed_dict)
 
-forward_pass(graph)
+forward_and_backward(graph)
 print(cost.value)
