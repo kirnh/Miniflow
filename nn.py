@@ -5,10 +5,11 @@ x, y, z, a = Input(), Input(), Input(), Input()
 add = Add(x, y, z, a)
 mul = Mul(x, y, z, a)
 feed_dict = {x: 10, y: 20, z: 25, a: 45}
-sorted_nodes = topological_sort(feed_dict = feed_dict)
+graph = topological_sort(feed_dict)
+forward_pass(graph)
 
-print('Testing Add node output: ', forward_pass(add, sorted_nodes))
-print('Testing Mul node output: ', forward_pass(mul, sorted_nodes))
+print('Testing Add node output: ', add.value)
+print('Testing Mul node output: ', mul.value)
 
 #Testing the working of Linear Node class
 print('Testing Linear node output:')
@@ -21,9 +22,8 @@ feed_dict = {
 }
 
 graph = topological_sort(feed_dict)
-output = forward_pass(linear, graph)
-
-print(output)
+forward_pass(graph)
+print(linear.value)
 
 X, W, b = Input(), Input(), Input()
 
@@ -35,9 +35,8 @@ b_ = np.array([-3., -5])
 
 feed_dict = {X: X_, W: W_, b: b_}
 graph = topological_sort(feed_dict)
-output = forward_pass(f, graph)
-
-print(output) 
+forward_pass(graph)
+print(f.value)
 
 #Testing the working of Sigmoid activation function
 print('Testing Sigmoid activation:')
@@ -53,11 +52,24 @@ b_ = np.array([-3., -5])
 feed_dict = {X: X_, W: W_, b: b_}
 
 graph = topological_sort(feed_dict)
-output = forward_pass(g, graph)
+forward_pass(graph)
+print(g.value)
 
 """
 Output should be:
 [[  1.23394576e-04   9.82013790e-01]
  [  1.23394576e-04   9.82013790e-01]]
 """
-print(output)
+
+print("Checking Mean squared error implementation:")
+y, a = Input(), Input()
+cost = MSE(y, a)
+
+y_ = np.array([1, 2, 3])
+a_ = np.array([4.5, 5, 10])
+
+feed_dict = {y: y_, a: a_}
+graph = topological_sort(feed_dict)
+
+forward_pass(graph)
+print(cost.value)

@@ -79,12 +79,23 @@ class Sigmoid(Node):
     def _sigmoid(self, x):
         """This method is separate from `forward` because it
         will be used later with `backward` as well."""
-        sigmoid = 1 / (1 + np.exp(-x))
+        sigmoid = 1. / (1. + np.exp(-x))
         return sigmoid
 
     def forward(self):
         x = self.inbound_nodes[0].value
         self.value = self._sigmoid(x)
+
+class MSE(Node):
+    def __init__(self, y, a):
+        Node.__init__(self, [y, a])
+
+    def forward(self):
+        y = self.inbound_nodes[0].value.reshape(-1, 1)
+        a = self.inbound_nodes[1].value.reshape(-1, 1)
+        m = len(y)
+        cost = (1 / m) * np.sum(np.square(y - a))
+        self.value = cost
 
 def topological_sort(feed_dict):
     """
@@ -129,10 +140,9 @@ def topological_sort(feed_dict):
 
 
 # forward_pass() runs the network and outputs a value
-def forward_pass(output_node, sorted_nodes):
-	for n in sorted_nodes:
+def forward_pass(graph):
+	for n in graph:
 		n.forward()
-	return output_node.value
 	"""
     Performs a forward pass through a list of sorted nodes.
 
